@@ -1,6 +1,6 @@
-/* * {
+* {
   border: 1px solid red;
-} */
+}
 
 .hero-image {
   height: 200px;
@@ -12,3 +12,7 @@
   /* background-color: blue; */
 }
 
+.details-column {
+  display: flex;
+  flex-direction: column;
+}

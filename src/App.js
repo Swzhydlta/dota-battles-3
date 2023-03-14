@@ -129,8 +129,30 @@ function App() {
               <img className="hero-image" src={heroOne?.img}></img>
             </div>
           </Col>
+          <Col className="details-column">
+            {heroOne ? (
+              <>
+                <span>Details</span>
+                <span>Health: {heroOne?.life}</span>{" "}
+                <span>Damage: {heroOne?.damage}</span> <span>Attribute</span>
+              </>
+            ) : (
+              <span>No hero selected</span>
+            )}
+          </Col>
           <Col align="center">
             <h1>VS</h1>
+          </Col>
+          <Col className="details-column">
+            {heroTwo ? (
+              <>
+                <span>Details</span>
+                <span>Health: {heroTwo?.life}</span>{" "}
+                <span>Damage: {heroTwo?.damage}</span> <span>Attribute</span>
+              </>
+            ) : (
+              <span>No hero selected</span>
+            )}
           </Col>
           <Col align="center">
             <div>{heroTwo?.name}</div>
