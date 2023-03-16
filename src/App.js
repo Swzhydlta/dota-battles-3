@@ -2,6 +2,7 @@ import "./App.css";
 import { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Dropdown } from "react-bootstrap";
+import { useEffect } from "react";
 
 function App() {
   const [heroes, setHeroes] = useState([
@@ -26,7 +27,27 @@ function App() {
   ]);
   const [heroOne, setHeroOne] = useState();
   const [heroTwo, setHeroTwo] = useState();
-  const [winner, setWinner] = useState("");
+  const [winner, setWinner] = useState();
+
+  const [attackFirst, setAttackFirst] = useState();
+  const [fightStarted, setFightStarted] = useState(false);
+  const [currentAttacker, setCurrentAttacker] = useState();
+
+  function startFight() {
+    // generate a random number between 0 and 1
+    let randomNumber = Math.random();
+
+    // return 0 if random number is less than 0.5, otherwise return 1
+    if (randomNumber < 0.5) {
+      setCurrentAttacker(0);
+    } else {
+      setCurrentAttacker(1);
+    }
+
+    setFightStarted(true);
+  }
+
+  // call the function to generate a random number
 
   function getHeroOne(input) {
     setHeroOne(input);
@@ -37,13 +58,37 @@ function App() {
   console.log("heroOne", heroOne);
   console.log("heroTwo", heroTwo);
 
-  function fight() {
-    if (heroOne.life < heroTwo.damage) {
-      setWinner(`${heroTwo.name} wins`);
+  /*  function fight() {
+    startFight();
+    if (attackFirst === 0) {
+      console.log("hero one starts");
     } else {
-      setWinner(`${heroOne.name} wins`);
+      console.log("hero 2starts");
     }
-  }
+  } */
+
+  useEffect(() => {
+    console.log("fight start");
+    while (fightStarted) {
+      if (currentAttacker === 0) {
+        if (heroOne.damage > heroTwo.life) {
+          setFightStarted(false);
+          console.log("hero one wins");
+        } else {
+          console.log("hero 2 is still alive");
+          setCurrentAttacker(1);
+        }
+      } else if (currentAttacker === 1) {
+        if (heroTwo.damage > heroOne.life) {
+          setFightStarted(false);
+          console.log("hero two wins");
+        } else {
+          console.log("hero 1 is still alive");
+          setCurrentAttacker(0);
+        }
+      }
+    }
+  }, [fightStarted]);
 
   return (
     <div className="App">
@@ -164,7 +209,7 @@ function App() {
         </Row>
         <Row>
           <Col align="center">
-            <button onClick={fight}>Fight</button>
+            <button onClick={startFight}>Fight</button>
           </Col>
         </Row>
         <Row>
