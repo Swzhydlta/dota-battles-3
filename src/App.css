@@ -1,6 +1,6 @@
-* {
+/* * {
   border: 1px solid red;
-}
+} */
 
 .hero-image {
   height: 200px;
@@ -15,4 +15,13 @@
 .details-column {
   display: flex;
   flex-direction: column;
+}
+
+.buttons-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-name {
+  min-height: 30px;
 }

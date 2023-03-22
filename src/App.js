@@ -8,22 +8,34 @@ function App() {
   const [heroes, setHeroes] = useState([
     {
       name: "Drow Ranger",
-      life: 100,
-      damage: 150,
+      life: 80,
+      damage: [20, 50],
       menu: 1,
       img: "drow_ranger.png",
     },
     {
       name: "Ember Spirit",
       life: 100,
-      damage: 80,
+      damage: [10, 40],
       menu: 1,
       img: "ember_spirit.png",
     },
-    { name: "Hoodwink", life: 100, damage: 150, menu: 1, img: "hoodwink.png" },
-    { name: "Nevermore", life: 100, damage: 80, menu: 2, img: "nevermore.png" },
-    { name: "Puck", life: 100, damage: 150, menu: 2, img: "puck.png" },
-    { name: "Pudge", life: 100, damage: 80, menu: 2, img: "pudge.png" },
+    {
+      name: "Hoodwink",
+      life: 120,
+      damage: [15, 30],
+      menu: 1,
+      img: "hoodwink.png",
+    },
+    {
+      name: "Nevermore",
+      life: 100,
+      damage: [20, 50],
+      menu: 2,
+      img: "nevermore.png",
+    },
+    { name: "Puck", life: 80, damage: [30, 60], menu: 2, img: "puck.png" },
+    { name: "Pudge", life: 100, damage: [20, 50], menu: 2, img: "pudge.png" },
   ]);
   const [heroOne, setHeroOne] = useState();
   const [heroTwo, setHeroTwo] = useState();
@@ -31,64 +43,107 @@ function App() {
 
   const [attackFirst, setAttackFirst] = useState();
   const [fightStarted, setFightStarted] = useState(false);
+  const [fightStarted2, setFightStarted2] = useState(true);
   const [currentAttacker, setCurrentAttacker] = useState();
-
-  function startFight() {
-    // generate a random number between 0 and 1
-    let randomNumber = Math.random();
-
-    // return 0 if random number is less than 0.5, otherwise return 1
-    if (randomNumber < 0.5) {
-      setCurrentAttacker(0);
-    } else {
-      setCurrentAttacker(1);
-    }
-
-    setFightStarted(true);
-  }
-
-  // call the function to generate a random number
+  const [hitsFirst, setHitsFirst] = useState("");
+  const [round, setRound] = useState(0);
 
   function getHeroOne(input) {
     setHeroOne(input);
   }
+
   function getHeroTwo(input) {
     setHeroTwo(input);
   }
-  console.log("heroOne", heroOne);
-  console.log("heroTwo", heroTwo);
 
-  /*  function fight() {
-    startFight();
-    if (attackFirst === 0) {
-      console.log("hero one starts");
+  function startFight() {
+    // generate a random number between 0 and 1
+    const randomNumber = Math.random();
+
+    // return 0 if random number is less than 0.5, otherwise return 1
+    if (randomNumber < 0.5) {
+      setCurrentAttacker(0);
+      setHitsFirst(`${heroOne?.name} hits first`);
     } else {
-      console.log("hero 2starts");
+      setCurrentAttacker(1);
+      setHitsFirst(`${heroTwo?.name} hits first`);
     }
-  } */
+  }
+
+  function hit() {
+    setRound((old) => old + 1);
+  }
 
   useEffect(() => {
-    console.log("fight start");
-    while (fightStarted) {
+    if (round > 0) {
+      // if current attacker is hero one
       if (currentAttacker === 0) {
-        if (heroOne.damage > heroTwo.life) {
-          setFightStarted(false);
-          console.log("hero one wins");
-        } else {
-          console.log("hero 2 is still alive");
+        // if hero two is not dead yet
+        if (heroTwo?.life > 0) {
+          // calculate how much damage hero one will deal
+          const [min, max] = heroOne.damage;
+          const damage = Math.floor(Math.random() * (max - min + 1) + min);
+          console.log("damage", damage);
+          const lifeLeft = heroTwo.life - damage;
+          setHeroTwo((prevState) => ({
+            ...prevState,
+            life: lifeLeft,
+          }));
           setCurrentAttacker(1);
         }
+        // else if hero two is attacking
       } else if (currentAttacker === 1) {
-        if (heroTwo.damage > heroOne.life) {
-          setFightStarted(false);
-          console.log("hero two wins");
-        } else {
-          console.log("hero 1 is still alive");
+        // if hero one is not dead yet
+        if (heroOne?.life > 0) {
+          // calculate the damage hero two will do
+          const [min, max] = heroTwo.damage;
+          const damage = Math.floor(Math.random() * (max - min + 1) + min);
+          console.log("damage", damage);
+          const lifeLeft = heroOne.life - damage;
+          setHeroOne((prevState) => ({
+            ...prevState,
+            life: lifeLeft,
+          }));
+
           setCurrentAttacker(0);
         }
       }
     }
-  }, [fightStarted]);
+  }, [round]);
+
+  useEffect(() => {
+    if (heroTwo?.life <= 0) {
+      setWinner(`${heroOne?.name} wins!`);
+    }
+    if (heroOne?.life <= 0) {
+      setWinner(`${heroTwo?.name} wins!`);
+    }
+  }, [heroTwo, heroOne]);
+
+  // console.log("currentAttacker", currentAttacker);
+
+  // useEffect(() => {
+  //   console.log("fight start");
+  //   while (fightStarted2) {
+  //     if (currentAttacker === 0) {
+  //       if (heroOne.damage > heroTwo.life) {
+  //         setFightStarted2(false);
+  //         console.log("hero one wins");
+  //       } else {
+  //         console.log("hero 2 is still alive");
+  //         setCurrentAttacker(1);
+  //       }
+  //     } else if (currentAttacker === 1) {
+  //       if (heroTwo.damage > heroOne.life) {
+  //         setFightStarted2(false);
+  //         console.log("hero two wins");
+  //       } else {
+  //         console.log("hero 1 is still alive");
+  //         setCurrentAttacker(0);
+  //       }
+  //     }
+  //   }
+  // }, [fightStarted]);
 
   return (
     <div className="App">
@@ -173,27 +228,41 @@ function App() {
             <div>
               <img className="hero-image" src={heroOne?.img}></img>
             </div>
+            <h1>{heroOne?.life > 0 && <span>HP: {heroOne?.life}</span>}</h1>
+            <h1>{heroOne?.life <= 0 && <span>Dead!</span>}</h1>
           </Col>
           <Col className="details-column">
             {heroOne ? (
               <>
                 <span>Details</span>
                 <span>Health: {heroOne?.life}</span>{" "}
-                <span>Damage: {heroOne?.damage}</span> <span>Attribute</span>
+                <span>Damage: {heroOne?.damage.toString()}</span>{" "}
               </>
             ) : (
               <span>No hero selected</span>
             )}
           </Col>
-          <Col align="center">
+          <Col align="center" className="buttons-col">
+            <span className="hero-name">{heroOne?.name}</span>
             <h1>VS</h1>
+            <span className="hero-name">{heroTwo?.name}</span>
+            <span>
+              <button className="mt-2" onClick={startFight}>
+                Draw Straws
+              </button>
+            </span>
+            <span>
+              <button className="mt-2" onClick={hit}>
+                Hit
+              </button>
+            </span>
           </Col>
           <Col className="details-column">
             {heroTwo ? (
               <>
                 <span>Details</span>
                 <span>Health: {heroTwo?.life}</span>{" "}
-                <span>Damage: {heroTwo?.damage}</span> <span>Attribute</span>
+                <span>Damage: {heroTwo?.damage.toString()}</span>{" "}
               </>
             ) : (
               <span>No hero selected</span>
@@ -202,16 +271,18 @@ function App() {
           <Col align="center">
             <div>{heroTwo?.name}</div>
             <div>
-              {" "}
               <img className="hero-image" src={heroTwo?.img}></img>
             </div>
+            <h1>{heroTwo?.life > 0 && <span>HP: {heroTwo?.life}</span>}</h1>
+            <h1>{heroTwo?.life <= 0 && <span>Dead!</span>}</h1>
           </Col>
         </Row>
         <Row>
           <Col align="center">
-            <button onClick={startFight}>Fight</button>
+            <h1>{hitsFirst}</h1>
           </Col>
         </Row>
+
         <Row>
           <Col align="center">
             <h1>{winner ? winner : ""}</h1>
